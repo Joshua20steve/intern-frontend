@@ -1,0 +1,84 @@
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
+function ViewComponent(){
+    const [data, setData] = useState([]);
+    const location = useLocation();
+    const itemId = location.state.itemId; 
+   
+    useEffect(() => {
+        fetch(`http://localhost:8777/intern/work/desc/${itemId}`)
+        .then(response => response.json())
+        .then(data => setData(data));
+    }, [itemId]);
+
+    return(
+        <div className="container mt-5">
+            <div className="row">
+                <div className="col-12 col-md-6 mb-3">
+                    <div className="card bg-dark text-white h-300">
+                        <img src={data.url} alt={data.name} style={{height: 550}} className="card-img" />
+                        <div className="card-img-overlay">
+                            {/* <h5 className="card-title">{data.name}</h5> */}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-12 col-md-6">
+                    <div className="card h-100">
+                        <div className="card-body">
+                        <p><strong>Item Id:</strong> {data.id}</p>
+                            <h3 className="card-title">Item Name: {data.name}</h3>
+                            <p className="card-text"><strong>Fact: {data.description}</strong></p>
+                            
+                           
+                            {/* <a href="#" className="btn btn-primary">Add to cart</a> */}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default ViewComponent;
+
+
+
+
+
+import React, { useEffect, useState } from "react";
+// import { lion, tiger, eagle, peacock, swann, biryani, pav, kebab, male, female } from "./actions/index";
+// import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import './Item.css'
+
+function ItemComponent() {
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
+
+  const view = (item) => {
+    navigate("/viewitem", { state: { itemId: item.id } });
+  };
+
+  useEffect(() => {
+    fetch("http://localhost:8777/intern/work/all")
+      .then(response => response.json())
+      .then(data => setData(data));
+  }, []);
+
+
+  return (
+    <div className="item-component" >
+      {data.map(item => (
+        <div className="item-component-item" key={item.id}>
+          <div onClick={() => view(item)} style={{ cursor: "pointer" }} >{item.id}.{item.name}
+          {/* <h2>{item.id}.{item.name}</h2> */}
+          <img src={item.url} style={{ width: 405, height: 340 }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default ItemComponent;
